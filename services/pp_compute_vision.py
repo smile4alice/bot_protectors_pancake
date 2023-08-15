@@ -7,6 +7,8 @@ import sys
 import pytesseract
 import cv2
 
+from services.logger import logger
+
 
 def create_screenshot(mode: str | None = None) -> np.ndarray:
     base_screen = np.array(pyautogui.screenshot())
@@ -24,25 +26,21 @@ def detect_window(base_screen_bgr: np.ndarray) -> np.ndarray:
         mask = cv2.inRange(base_screen_hsv, lower, upper)
         ret, threshhold4 = cv2.threshold(mask, 125, 255, cv2.THRESH_TOZERO)
 
-        countours, h = cv2.findContours(
-            threshhold4, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
-        )
+        countours, h = cv2.findContours(threshhold4, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         window_points = []
         for contour in countours:
             if cv2.contourArea(contour) > 300:
                 x, y, w, h = cv2.boundingRect(contour)
                 window_points.append((x, y, x + w, y + h))
 
-        window_points = sorted(
-            window_points, key=lambda item: item[3] - item[1], reverse=True
-        )
+        window_points = sorted(window_points, key=lambda item: item[3] - item[1], reverse=True)
         x1 = window_points[1][2]
         y1 = window_points[1][1]
         x2 = window_points[0][0]
         y2 = window_points[0][3]
         return base_screen_bgr[y1:y2, x1:x2], (x1, y1, x2, y2)
     except Exception as exc:
-        print(f"Вікно не було знайдено: {exc}")
+        logger.error(f"Вікно не було знайдено: exc[{exc}]")
         sys.exit()
 
 
@@ -60,9 +58,7 @@ def detect_numbers_on_energy(img, psm: int = 6) -> List[dict]:
 
     kernel_open = np.ones((5, 5), np.uint8)
     kernel_close = np.ones((3, 3), np.uint8)
-    thresh, new_img = cv2.threshold(
-        mask, 160, 255, 1, cv2.THRESH_OTSU | cv2.THRESH_BINARY
-    )
+    thresh, new_img = cv2.threshold(mask, 160, 255, 1, cv2.THRESH_OTSU | cv2.THRESH_BINARY)
     blur_img = cv2.medianBlur(new_img, 5)
     opening = cv2.morphologyEx(blur_img, cv2.MORPH_OPEN, kernel_open)
     close = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel_close)
@@ -88,9 +84,42 @@ def detect_numbers_on_energy(img, psm: int = 6) -> List[dict]:
     return result
 
 
-def detect_text(
-    img, threshold: float = 15, psm: int = 6, allowlist: list = None
-) -> List[str]:
+def detect_lvl_hero(img):
+    scale_percent = 400
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    resized_img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+    base_screen_hsv = cv2.cvtColor(resized_img, cv2.COLOR_BGR2HSV)
+    gaus_blur = cv2.GaussianBlur(base_screen_hsv, (5, 5), 4)
+    upper = np.array([140, 40, 255])
+    lower = np.array([0, 0, 170])
+    new_img = cv2.inRange(gaus_blur, lower, upper)
+    kernel_close = np.ones((3, 3), np.uint8)
+    close = cv2.morphologyEx(new_img, cv2.MORPH_CLOSE, kernel_close)
+    blur = cv2.medianBlur(close, 3, 4)
+    custom_config = f"--oem 3 --psm 6"
+    data = pytesseract.image_to_data(blur, lang="eng", config=custom_config)
+    result = list()
+    for number, el in enumerate(data.splitlines()):
+        if number == 0:
+            continue
+        el = el.split()
+        if el[10] != "-1":
+            result.append(
+                {
+                    "left": int(int(el[6]) / (scale_percent / 100)),
+                    "top": int(int(el[7]) / (scale_percent / 100)),
+                    "width": int(int(el[8]) / (scale_percent / 100)),
+                    "height": int(int(el[9]) / (scale_percent / 100)),
+                    "text": el[11] if len(el) > 11 else None,
+                    "trash": el[10],
+                }
+            )
+    return result
+
+
+def detect_text(img, threshold: float = 15, psm: int = 6, allowlist: list = None) -> List[str]:
     scale_percent = 500
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
@@ -98,9 +127,7 @@ def detect_text(
     resized_img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
     blur_img = cv2.GaussianBlur(resized_img, (3, 3), 0)
     blur_img = cv2.medianBlur(blur_img, 5)
-    ret, threshold_image = cv2.threshold(
-        blur_img, 154, 255, 3, cv2.THRESH_OTSU | cv2.THRESH_BINARY
-    )
+    ret, threshold_image = cv2.threshold(blur_img, 154, 255, 3, cv2.THRESH_OTSU | cv2.THRESH_BINARY)
     config = f"--oem 3 --psm {psm}{(' -c tessedit_char_whitelist=' + ('').join(allowlist)) if allowlist else ''}"
     data = pytesseract.image_to_data(threshold_image, config=config, lang="eng")
     result = list()
@@ -111,10 +138,10 @@ def detect_text(
         if float(el[10]) > threshold:
             result.append(
                 {
-                    "left": el[6],
-                    "top": el[7],
-                    "width": el[8],
-                    "height": el[9],
+                    "left": int(int(el[6]) / (scale_percent / 100)),
+                    "top": int(int(el[7]) / (scale_percent / 100)),
+                    "width": int(int(el[8]) / (scale_percent / 100)),
+                    "height": int(int(el[9]) / (scale_percent / 100)),
                     "text": el[11] if len(el) > 11 else None,
                 }
             )
@@ -129,19 +156,17 @@ def move_to_text(main_coords, text_point):
 
 def get_energy(main_window, main_coords):
     x1, y1, x2, y2 = main_coords
-    energy_section = main_window[
-        0 : int((y2 - y1) * 0.0337), int((x2 - x1) * 0.397) : int((x2 - x1) * 0.51)
-    ]
+    energy_section = main_window[0 : int((y2 - y1) * 0.0337), int((x2 - x1) * 0.397) : int((x2 - x1) * 0.51)]
     result: list = detect_numbers_on_energy(energy_section)
     try:
         energy = result[0]["text"].split("/")[0]
         # x_center = int(result[0]["left"]) + int(result[0]["width"]) // 2
         # y_center = int(result[0]["top"]) + int(result[0]["height"]) // 2
         # move_to_text(main_coords, (x_center, y_center))
-        return int(energy)
+        return True, int(energy)
     except Exception:
-        print(f"Енергії в даній області не знайдено {result}")
-
+        logger.warning(f"Енергії в даній області не знайдено {result}")
+        return False, None
 
 def get_quest_status(main_window, main_coords):
     x1, y1, x2, y2 = main_coords
@@ -149,14 +174,12 @@ def get_quest_status(main_window, main_coords):
         int((y2 - y1) * 0.47) : int((y2 - y1) * 0.59),
         int((x2 - x1) * 0.89) : int((x2 - x1) * 0.97),
     ]
-    result: list = detect_text(
-        quest_section, allowlist=[str(i) for i in range(10)] + ["/"]
-    )
+    result: list = detect_text(quest_section, allowlist=[str(i) for i in range(10)] + ["/"])
     try:
         quest_status = [i["text"] for i in result]
         return bool(quest_status)
     except Exception:
-        print(f"Не вдалося отримати статус {result}")
+        logger.error(f"Не вдалося отримати статус {result}")
 
 
 def check_congrats(src):
