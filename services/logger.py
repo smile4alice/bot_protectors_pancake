@@ -16,9 +16,9 @@ def _create_logger() -> logging:
     logs_colors = {
         "DEBUG": "blue",
         "INFO": "green",
-        "WARNING": "bold_cyan",
-        "ERROR": "bold_red",
-        "CRITICAL": "bold_red",
+        "WARNING": "cyan",
+        "ERROR": "yellow",
+        "CRITICAL": "red",
     }
 
     logger = logging.getLogger()

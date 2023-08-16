@@ -1,9 +1,8 @@
-import tkinter as tk
-from tkinter import IntVar, Entry
 import threading
 import os
 from time import sleep
 
+import tkinter as tk
 import keyboard
 
 from handlers.ultragem import PPHandlers
@@ -27,24 +26,24 @@ class FunctionSelectionWindow(tk.Toplevel):
             self.iconbitmap("static/favicon.ico")
         except Exception as exc:
             print(exc)
-        self.checkbox_var_select_all = IntVar(value=0)
-        self.checkbox_var_upgrade_hero = IntVar(value=0)
-        self.checkbox_var_claim_free_recruit = IntVar(value=0)
-        self.checkbox_var_claim_free_medal = IntVar(value=0)
-        self.checkbox_var_claim_daily_gift = IntVar(value=0)
-        self.checkbox_var_claim_free_expidition = IntVar(value=0)
-        self.checkbox_var_claim_quick_afk = IntVar(value=0)
-        self.checkbox_var_purchase_store_items = IntVar(value=0)
-        self.checkbox_var_purchase_legion_donation = IntVar(value=0)
-        self.checkbox_var_purchase_legion_items = IntVar(value=0)
-        self.checkbox_var_join_to_arena = IntVar(value=0)
-        self.checkbox_var_join_to_chapter = IntVar(value=0)
-        self.checkbox_var_join_to_relics = IntVar(value=0)
-        self.checkbox_var_claim_mission = IntVar(value=0)
-        self.checkbox_var_farm_mine = IntVar(value=1)
+        self.checkbox_var_select_all = tk.IntVar(value=0)
+        self.checkbox_var_upgrade_hero = tk.IntVar(value=0)
+        self.checkbox_var_claim_free_recruit = tk.IntVar(value=0)
+        self.checkbox_var_claim_free_medal = tk.IntVar(value=0)
+        self.checkbox_var_claim_daily_gift = tk.IntVar(value=0)
+        self.checkbox_var_claim_free_expidition = tk.IntVar(value=0)
+        self.checkbox_var_claim_quick_afk = tk.IntVar(value=0)
+        self.checkbox_var_purchase_store_items = tk.IntVar(value=0)
+        self.checkbox_var_legion_donate = tk.IntVar(value=0)
+        self.checkbox_var_purchase_legion_items = tk.IntVar(value=0)
+        self.checkbox_var_join_to_arena = tk.IntVar(value=0)
+        self.checkbox_var_join_to_chapter = tk.IntVar(value=0)
+        self.checkbox_var_join_to_relics = tk.IntVar(value=0)
+        self.checkbox_var_claim_mission = tk.IntVar(value=0)
+        self.checkbox_var_farm_mine = tk.IntVar(value=1)
 
         entry_var = tk.StringVar()
-        self.join_to_arena_entry = Entry(
+        self.join_to_arena_entry = tk.Entry(
             self,
             font=font,
             textvariable=entry_var,
@@ -121,13 +120,13 @@ class FunctionSelectionWindow(tk.Toplevel):
             font=font,
         )
         self.checkbox_purchase_store_items.grid(row=7, column=0, columnspan=2, sticky="w")
-        self.checkbox_purchase_legion_donation = tk.Checkbutton(
+        self.checkbox_legion_donate = tk.Checkbutton(
             self,
-            text="PURCHASE LEGION DONATION",
-            variable=self.checkbox_var_purchase_legion_donation,
+            text="LEGION DONATE",
+            variable=self.checkbox_var_legion_donate,
             font=font,
         )
-        self.checkbox_purchase_legion_donation.grid(row=8, column=0, columnspan=2, sticky="w")
+        self.checkbox_legion_donate.grid(row=8, column=0, columnspan=2, sticky="w")
         self.checkbox_purchase_legion_items = tk.Checkbutton(
             self,
             text="PURCHASE LEGION ITEMS",
@@ -202,7 +201,7 @@ class FunctionSelectionWindow(tk.Toplevel):
         self.checkbox_var_claim_free_expidition.set(select_all_value)
         self.checkbox_var_claim_quick_afk.set(select_all_value)
         self.checkbox_var_purchase_store_items.set(select_all_value)
-        self.checkbox_var_purchase_legion_donation.set(select_all_value)
+        self.checkbox_var_legion_donate.set(select_all_value)
         self.checkbox_var_purchase_legion_items.set(select_all_value)
         self.checkbox_var_join_to_arena.set(select_all_value)
         self.checkbox_var_join_to_relics.set(select_all_value)
@@ -227,14 +226,15 @@ class FunctionSelectionWindow(tk.Toplevel):
             pp_handlers.claim_quick_afk()
         if self.checkbox_var_purchase_store_items.get():
             pp_handlers.purchase_store_items()
-        if self.checkbox_var_purchase_legion_donation.get():
-            pp_handlers.purchase_legion_donation()
+        if self.checkbox_var_legion_donate.get():
+            pp_handlers.legion_donate()
         if self.checkbox_var_purchase_legion_items.get():
             pp_handlers.purchase_legion_items()
         if self.checkbox_var_join_to_arena.get():
             try:
                 count = int(self.join_to_arena_count)
             except Exception:
+                logger.error("JOINT TO ARENA count not found: set to 1")
                 count = 1
             for _ in range(count):
                 pp_handlers.join_to_arena()
@@ -260,7 +260,7 @@ class FunctionSelectionWindow(tk.Toplevel):
             timer_label.after(1000, self.countdown)
             COUNT -= 1
         else:
-            logger.warning(f"BOT IS STARTED")
+            logger.warning(f" BOT IS STARTED ".center(30, "*"))
             timer_label.config(text="BOT ON", font=("calibri", 30, "bold"), bg="blue", fg="yellow")
             timer_label.after(1000, self.run_selected_functions)
 

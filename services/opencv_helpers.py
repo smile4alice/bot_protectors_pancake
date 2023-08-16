@@ -1,11 +1,10 @@
 from typing import List
+import sys
+
+import numpy as np
 import cv2
 import pyautogui
-import numpy as np
-
-import sys
 import pytesseract
-import cv2
 
 from services.logger import logger
 
@@ -143,15 +142,10 @@ def detect_text(img, threshold: float = 15, psm: int = 6, allowlist: list = None
                     "width": int(int(el[8]) / (scale_percent / 100)),
                     "height": int(int(el[9]) / (scale_percent / 100)),
                     "text": el[11] if len(el) > 11 else None,
+                    "tresh": el[10],
                 }
             )
     return result
-
-
-def move_to_text(main_coords, text_point):
-    x1, y1, x2, y2 = main_coords
-    x_avg, y_avg = text_point
-    pyautogui.moveTo(x_avg + x1, y_avg + y1)
 
 
 def get_energy(main_window, main_coords):
@@ -160,13 +154,10 @@ def get_energy(main_window, main_coords):
     result: list = detect_numbers_on_energy(energy_section)
     try:
         energy = result[0]["text"].split("/")[0]
-        # x_center = int(result[0]["left"]) + int(result[0]["width"]) // 2
-        # y_center = int(result[0]["top"]) + int(result[0]["height"]) // 2
-        # move_to_text(main_coords, (x_center, y_center))
         return True, int(energy)
     except Exception:
-        logger.warning(f"Енергії в даній області не знайдено {result}")
         return False, None
+
 
 def get_quest_status(main_window, main_coords):
     x1, y1, x2, y2 = main_coords
@@ -217,6 +208,4 @@ def check_congrats(src):
     _, max_val, _, max_loc = cv2.minMaxLoc(res)
 
     return max_val
-    # loc = np.where(res >= 0.95)
-    # for pt in zip(*loc[::-1]):
-    #     cv2.rectangle(src, pt,(pt[0] + w, pt[1] + h),(0,255,255), 2)
+
