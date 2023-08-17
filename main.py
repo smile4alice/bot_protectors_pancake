@@ -268,7 +268,8 @@ class FunctionSelectionWindow(tk.Toplevel):
         if self.checkbox_var_farm_mine.get():
             try:
                 farm_mine_count = int(self.farm_mine_count)
-            except Exception:
+            except Exception as exc:
+                print(exc)
                 farm_mine_count = 0
             pp_handlers.farm_mine(farm_mine_count)
         self.master.destroy()

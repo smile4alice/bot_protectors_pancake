@@ -8,9 +8,9 @@ def _create_logger() -> logging:
     "Executes the configuration and creates an instance of the logger"
 
     os.makedirs(os.path.join(".logs"), exist_ok=True)
-    logs_level = logging.DEBUG
-    logs_file_level = logging.DEBUG
-    logs_format = "%(levelname)-8s| %(asctime)-9s| %(message)s"
+    logs_level = logging.INFO
+    logs_file_level = logging.INFO
+    logs_format = " %(levelname)-8s | %(asctime)-9s| %(message)s"
     logs_file_date_format = "%H:%M:%S"
     logs_file_path = os.path.join(".logs", "log_data.log")
     logs_colors = {

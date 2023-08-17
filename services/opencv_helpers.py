@@ -118,7 +118,7 @@ def detect_lvl_hero(img):
     return result
 
 
-def detect_text(img, threshold: float = 15, psm: int = 6, allowlist: list = None) -> List[str]:
+def detect_text(img, threshold: float = 65, psm: int = 6, allowlist: list = None) -> List[str]:
     scale_percent = 500
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
@@ -145,9 +145,6 @@ def detect_text(img, threshold: float = 15, psm: int = 6, allowlist: list = None
                     "tresh": el[10],
                 }
             )
-    # print(result)
-    # cv2.imshow('123', threshold_image)
-    # cv2.waitKey(0)
     return result
 
 

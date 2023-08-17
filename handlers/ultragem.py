@@ -27,14 +27,14 @@ class PPHandlers:
 
         self.config: Config = load_config(self.main_coords)
         pytesseract.pytesseract.tesseract_cmd = self.config.tesseract.path
-        pyautogui.PAUSE = uniform(0.4, 0.5)
+        pyautogui.PAUSE = uniform(0.25, 0.4)
 
         self.main_buttons = self.config.pp_bot.main_buttons
         self.sectors = self.config.pp_bot.sectors
         logger.info("load coords: OK")
 
     def upgrade_hero(self):
-        logger.warning(" UPGRADE HERO ".center(30, "-"))
+        logger.warning(" UPGRADE HERO ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.main_buttons.heroes.X, self.main_buttons.heroes.Y)
@@ -61,7 +61,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_free_recruit(self):
-        logger.warning(" CLAIM FREE RECRUIT ".center(30, "-"))
+        logger.warning(" CLAIM FREE RECRUIT ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.recruit.X, self.sectors.recruit.Y)
@@ -82,7 +82,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_free_medal(self):
-        logger.warning(" CLAIM FREE MEDAL ".center(30, "-"))
+        logger.warning(" CLAIM FREE MEDAL ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.medal_hall.X, self.sectors.medal_hall.Y)
@@ -104,7 +104,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_daily_gift(self):
-        logger.warning(" CLAIM DAILY GIFT ".center(30, "-"))
+        logger.warning(" CLAIM DAILY GIFT ".center(40, "-"))
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.gift_pack.X, self.sectors.gift_pack.Y)
         pyautogui.click(self.sectors.gift_claim_free.X, self.sectors.gift_claim_free.Y, interval=3)
@@ -113,7 +113,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_free_expidition(self):
-        logger.warning(" CLAIM FREE EXPEDITION ".center(30, "-"))
+        logger.warning(" CLAIM FREE EXPEDITION ".center(40, "-"))
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.battles.X, self.sectors.battles.Y)
         pyautogui.click(self.sectors.expedition_road.X, self.sectors.expedition_road.Y)
@@ -124,7 +124,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_quick_afk(self):
-        logger.warning(" CLAIM QUICK AFK ".center(30, "-"))
+        logger.warning(" CLAIM QUICK AFK ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.main_buttons.chapter.X, self.main_buttons.chapter.Y)
@@ -163,7 +163,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def purchase_store_items(self):
-        logger.warning(" PURCHASE STORE ITEMS ".center(30, "-"))
+        logger.warning(" PURCHASE STORE ITEMS ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
 
         def control_store_missclick():
@@ -197,7 +197,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def legion_donate(self):
-        logger.warning(" LEGION DONATE ".center(30, "-"))
+        logger.warning(" LEGION DONATE ".center(40, "-"))
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.legion.X, self.sectors.legion.Y)
         pyautogui.click(self.sectors.legion_upgrade.X, self.sectors.legion_upgrade.Y)
@@ -207,7 +207,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def purchase_legion_items(self):
-        logger.warning(" PURCHASE LEGION ITEMS ".center(30, "-"))
+        logger.warning(" PURCHASE LEGION ITEMS ".center(40, "-"))
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.legion.X, self.sectors.legion.Y)
         pyautogui.click(self.sectors.legion_store.X, self.sectors.legion_store.Y)
@@ -223,7 +223,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def join_to_arena(self):
-        logger.info(" JOIN TO ARENA ".center(30, "-"))
+        logger.info(" JOIN TO ARENA ".center(40, "-"))
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.main_buttons.arena.X, self.main_buttons.arena.Y)
         pyautogui.click(self.sectors.arena_challenge.X, self.sectors.arena_challenge.Y)
@@ -235,7 +235,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def joit_to_chapter(self):
-        logger.warning(" JOIN TO CHAPTER ".center(30, "-"))
+        logger.warning(" JOIN TO CHAPTER ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.main_buttons.chapter.X, self.main_buttons.chapter.Y)
@@ -271,7 +271,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def joit_to_relics(self):
-        logger.warning(" JOIN TO RELICS ".center(30, "-"))
+        logger.warning(" JOIN TO RELICS ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.battles.X, self.sectors.battles.Y)
@@ -303,7 +303,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def claim_mission(self):
-        logger.warning(" CLAIM MISSION ".center(30, "-"))
+        logger.warning(" CLAIM MISSION ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.mission.X, self.sectors.mission.Y)
@@ -339,7 +339,7 @@ class PPHandlers:
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
     def farm_mine(self, farm_mine_count):
-        logger.warning(" FARM MINE ".center(30, "-"))
+        logger.warning(" FARM MINE ".center(40, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.mine.X, self.sectors.mine.Y)
@@ -354,7 +354,7 @@ class PPHandlers:
                 if res:
                     logger.info(f"energy: {energy_left} | quests: {'is avalaible' if is_complete_quests else 'is NOT avalaible'}")
                     if is_complete_quests or (energy_left > 0 and farm_mine_count > 0):
-                        if temp_energy > energy_left and farm_mine_count > 0:
+                        if temp_energy > energy_left and farm_mine_count >= 0:
                             temp_energy = energy_left
                             farm_mine_count -= 1
                         pyautogui.click(self.sectors.mine_collect.X, self.sectors.mine_collect.Y)

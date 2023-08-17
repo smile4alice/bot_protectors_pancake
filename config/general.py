@@ -26,8 +26,8 @@ def load_config(main_coords) -> Config:
         with open("WHITELIST.txt", "r") as f:
             WHITELIST: list = [item.strip() for item in f.readlines()]
     except:
-        WHITELIST = None
-        logger.error("В кореневій директорії не знайдено файл < WHITELIST.txt > ")
+        WHITELIST = [None]
+        logger.info("WHITELIST.txt: not found> ")
 
     coords = load_coords(main_coords)
 

@@ -26,7 +26,7 @@
     ```
 * Встановіть пакети зі списку що знаходиться у файлі:
     ```
-    pip install -r .\requiremets.txt
+    pip install -r .\requirements.txt
     ```
 * **Встановіть сервіс для розпізнавання тексту**
   - Завантажити можна за посиланням https://github.com/UB-Mannheim/tesseract/wiki
