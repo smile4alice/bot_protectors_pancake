@@ -27,7 +27,7 @@ class PPHandlers:
 
         self.config: Config = load_config(self.main_coords)
         pytesseract.pytesseract.tesseract_cmd = self.config.tesseract.path
-        pyautogui.PAUSE = uniform(0.3, 0.4)
+        pyautogui.PAUSE = uniform(0.4, 0.5)
 
         self.main_buttons = self.config.pp_bot.main_buttons
         self.sectors = self.config.pp_bot.sectors
@@ -42,6 +42,7 @@ class PPHandlers:
         pyautogui.scroll(clicks=-500)
 
         logger.info("heroes < 80 lvl: search..")
+        sleep(0.5)
         base_screen_bgr = create_screenshot("bgr")
         hero_section = base_screen_bgr[int(y1 + (y2 - y1) * 0.15) : int(y1 + (y2 - y1) * 0.90), x1:x2]
         res = detect_lvl_hero(hero_section)
@@ -65,12 +66,13 @@ class PPHandlers:
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.recruit.X, self.sectors.recruit.Y)
         logger.info("free recruitment: search..")
+        sleep(0.5)
         base_screen_bw = create_screenshot("bgr")
         recruit_section = base_screen_bw[
             int(y1 + (y2 - y1) * 0.877) : int(y1 + (y2 - y1) * 0.90), int(x1 + (x2 - x1) * 0.05) : int(x1 + (x2 - x1) * 0.60)
         ]
         res = detect_text(recruit_section)
-        if list(filter(lambda item: re.findall(r"[123]/3", item["text"]), res)) or not res:  # TODO
+        if list(filter(lambda item: re.findall(r"[123]/3", item["text"]), res)) or not res:
             logger.info("free recruitment: is available")
             pyautogui.click(self.sectors.recruit_once.X, self.sectors.recruit_once.Y, interval=8)
             logger.info("claim free recruit --> DONE")
@@ -86,6 +88,7 @@ class PPHandlers:
         pyautogui.click(self.sectors.medal_hall.X, self.sectors.medal_hall.Y)
         pyautogui.click(self.main_buttons.conquest.X, self.main_buttons.conquest.Y)
         logger.info("free medal: search..")
+        sleep(0.5)
         base_screen_bw = create_screenshot()
         medal_section = base_screen_bw[
             int(y2 - (y2 - y1) * 0.158) : int(y2 - (y2 - y1) * 0.125), int(x1 + (x2 - x1) * 0.03) : int(x1 + (x2 - x1) * 0.60)
@@ -93,7 +96,7 @@ class PPHandlers:
         res = detect_text(medal_section)
         if list(filter(lambda item: item["text"].lower() == "free", res)):
             logger.info("free medal: is available")
-            pyautogui.click(*self.sectors["Recruit Once"], interval=8)
+            pyautogui.click(self.sectors.recruit_once.X, self.sectors.recruit_once.Y, interval=8)
             logger.info("claim medal --> DONE")
         else:
             logger.error("free medal: is NOT available")
@@ -130,6 +133,7 @@ class PPHandlers:
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
         logger.info("[Quick AFK]: search..")
+        sleep(0.5)
         base_screen_bw = create_screenshot()
         quick_buttons = base_screen_bw[int(y1 + (y2 - y1) * 0.64) : int(y1 + (y2 - y1) * 0.87), x1 : int(x1 + (x2 - x1) * 0.15)]
         res = detect_text(quick_buttons)
@@ -139,14 +143,14 @@ class PPHandlers:
             x_center = res[0]["left"] + res[0]["width"] // 2
             y_center = int((y2 - y1) * 0.64) + (res[0]["top"] + res[0]["height"] // 2)
             pyautogui.click(x1 + x_center, y1 + y_center)
-            sleep(1)
             logger.info("[Free]: search..")
+            sleep(1)
             base_screen_bw = create_screenshot()
             free_button = base_screen_bw[
                 int(y1 + (y2 - y1) * 0.669) : int(y1 + (y2 - y1) * 0.71), int(x1 + (x2 - x1) * 0.336) : int(x1 + (x2 - x1) * 0.646)
             ]
             res = detect_text(free_button)
-            res = list(filter(lambda item: item["text"].lower() == "free", res))  # TODO
+            res = list(filter(lambda item: item["text"].lower() == "free", res))
             if res:
                 logger.info("[Free]: were found")
                 pyautogui.click(self.sectors.quick_afk_claim.X, self.sectors.quick_afk_claim.Y, interval=3)
@@ -163,6 +167,7 @@ class PPHandlers:
         x1, y1, x2, y2 = self.main_coords
 
         def control_store_missclick():
+            sleep(0.5)
             base_screen_bgr = create_screenshot("bgr")
             purchase_section = base_screen_bgr[
                 int(y1 + (y2 - y1) * 0.64) : int(y1 + (y2 - y1) * 0.68),
@@ -183,8 +188,8 @@ class PPHandlers:
             pyautogui.click(self.sectors.store_5_star_hero_fragment.X, self.sectors.store_5_star_hero_fragment.Y)
         if control_store_missclick():
             for _ in range(5):
-                pyautogui.click(*self.sectors["Store Add Count"], interval=0.15)
-            pyautogui.click(*self.sectors["Store Purchase"], interval=3)
+                pyautogui.click(self.sectors.store_add_count.X, self.sectors.store_add_count.Y, interval=0.15)
+            pyautogui.click(self.sectors.store_purchase.X, self.sectors.store_purchase.Y, interval=3)
             logger.info("purchase: 5 star Hero Fragment --> DONE")
         else:
             logger.error("purchase: 5 star Hero Fragment --> FAILED")
@@ -235,6 +240,7 @@ class PPHandlers:
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.main_buttons.chapter.X, self.main_buttons.chapter.Y)
         logger.info("[Auto Challenge]: search..")
+        sleep(0.5)
         base_screen_bw = create_screenshot()
         chapter_buttons = base_screen_bw[int(y1 + (y2 - y1) * 0.64) : int(y1 + (y2 - y1) * 0.87), x1 : int(x1 + (x2 - x1) * 0.15)]
         res = detect_text(chapter_buttons)
@@ -247,6 +253,7 @@ class PPHandlers:
             while True:
                 sleep(5)
                 pyautogui.click(self.main_buttons.chapter.X, self.main_buttons.chapter.Y)
+                sleep(0.5)
                 base_screen_bgr = create_screenshot("bgr")
                 challenge_button = base_screen_bgr[
                     int(y1 + (y2 - y1) * 0.83) : int(y1 + (y2 - y1) * 0.87),
@@ -280,6 +287,7 @@ class PPHandlers:
         while True:
             sleep(5)
             pyautogui.click(self.main_buttons.chapter.X, self.main_buttons.chapter.Y)
+            sleep(0.5)
             base_screen_bgr = create_screenshot("bgr")
             title_section = base_screen_bgr[
                 int(y2 - (y2 - y1) * 0.97) : int(y2 - (y2 - y1) * 0.88),
@@ -301,6 +309,7 @@ class PPHandlers:
         pyautogui.click(self.sectors.mission.X, self.sectors.mission.Y)
         for _ in range(11):
             logger.info("[Claim]: search..")
+            sleep(0.5)
             base_screen_bgr = create_screenshot("bgr")
             claim_section = base_screen_bgr[
                 int(y1 + (y2 - y1) * 0.40) : int(y1 + (y2 - y1) * 0.43),
@@ -329,11 +338,13 @@ class PPHandlers:
         for _ in range(4):
             pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
 
-    def farm_mine(self):
+    def farm_mine(self, farm_mine_count):
         logger.warning(" FARM MINE ".center(30, "-"))
         x1, y1, x2, y2 = self.main_coords
         pyautogui.click(self.main_buttons.main_city.X, self.main_buttons.main_city.Y)
         pyautogui.click(self.sectors.mine.X, self.sectors.mine.Y)
+        sleep(0.5)
+        temp_energy = 999
         while True:
             try:
                 base_screen_bw = create_screenshot("bgr")
@@ -341,8 +352,11 @@ class PPHandlers:
                 res, energy_left = get_energy(main_window, self.main_coords)
                 is_complete_quests = get_quest_status(main_window, self.main_coords)
                 if res:
-                    logger.info(f"energy: {energy_left} | quests: {is_complete_quests}")
-                    if energy_left > 0 and is_complete_quests:
+                    logger.info(f"energy: {energy_left} | quests: {'is avalaible' if is_complete_quests else 'is NOT avalaible'}")
+                    if is_complete_quests or (energy_left > 0 and farm_mine_count > 0):
+                        if temp_energy > energy_left and farm_mine_count > 0:
+                            temp_energy = energy_left
+                            farm_mine_count -= 1
                         pyautogui.click(self.sectors.mine_collect.X, self.sectors.mine_collect.Y)
                         sleep(3)
                         base_screen_bgr = create_screenshot("bgr")

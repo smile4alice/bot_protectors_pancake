@@ -42,11 +42,11 @@ class FunctionSelectionWindow(tk.Toplevel):
         self.checkbox_var_claim_mission = tk.IntVar(value=0)
         self.checkbox_var_farm_mine = tk.IntVar(value=1)
 
-        entry_var = tk.StringVar()
+        entry_var_join_to_arena = tk.StringVar()
         self.join_to_arena_entry = tk.Entry(
             self,
             font=font,
-            textvariable=entry_var,
+            textvariable=entry_var_join_to_arena,
             width=5,
             bg="light gray",
             validate="key",
@@ -54,13 +54,34 @@ class FunctionSelectionWindow(tk.Toplevel):
         self.join_to_arena_entry.insert(0, "1")
         self.join_to_arena_entry.grid(row=10, column=1, sticky="e", padx=(5, 10))
 
-        def on_validate(input_text):
+        entry_var_farm_mine = tk.StringVar()
+        self.farm_mine_entry = tk.Entry(
+            self,
+            font=font,
+            textvariable=entry_var_farm_mine,
+            width=5,
+            bg="light gray",
+            validate="key",
+        )
+        self.farm_mine_entry.insert(0, "0")
+        self.farm_mine_entry.grid(row=14, column=1, sticky="e", padx=(5, 10))
+
+        def on_validate_join_to_arena(input_text):
             if all(char.isdigit() for char in input_text) and input_text and input_text != "0":
                 self.join_to_arena_entry.config({"background": "light gray"})
             else:
                 self.join_to_arena_entry.config({"background": "red"})
 
-        entry_var.trace_add("write", lambda name, index, mode, sv=entry_var: on_validate(sv.get()))
+        def on_validate_farm_mine(input_text):
+            if all(char.isdigit() for char in input_text) or not input_text:
+                self.farm_mine_entry.config({"background": "light gray"})
+            else:
+                self.farm_mine_entry.config({"background": "red"})
+
+        entry_var_join_to_arena.trace_add(
+            "write", lambda name, index, mode, sv=entry_var_join_to_arena: on_validate_join_to_arena(sv.get())
+        )
+        entry_var_farm_mine.trace_add("write", lambda name, index, mode, sv=entry_var_farm_mine: on_validate_farm_mine(sv.get()))
 
         self.checkbox_select_all = tk.Checkbutton(
             self,
@@ -164,7 +185,7 @@ class FunctionSelectionWindow(tk.Toplevel):
         self.checkbox_claim_mission.grid(row=13, column=0, columnspan=2, sticky="w")
         self.checkbox_claim_farm_mine = tk.Checkbutton(
             self,
-            text="FARM MINE" + " " * 33,
+            text="FARM MINE" + " " * 19,
             background="yellow",
             variable=self.checkbox_var_farm_mine,
             font=font,
@@ -232,11 +253,11 @@ class FunctionSelectionWindow(tk.Toplevel):
             pp_handlers.purchase_legion_items()
         if self.checkbox_var_join_to_arena.get():
             try:
-                count = int(self.join_to_arena_count)
+                join_to_arena_count = int(self.join_to_arena_count)
             except Exception:
                 logger.error("JOINT TO ARENA count not found: set to 1")
-                count = 1
-            for _ in range(count):
+                join_to_arena_count = 1
+            for _ in range(join_to_arena_count):
                 pp_handlers.join_to_arena()
         if self.checkbox_var_join_to_chapter.get():
             pp_handlers.joit_to_chapter()
@@ -245,13 +266,18 @@ class FunctionSelectionWindow(tk.Toplevel):
         if self.checkbox_var_claim_mission.get():
             pp_handlers.claim_mission()
         if self.checkbox_var_farm_mine.get():
-            pp_handlers.farm_mine()
+            try:
+                farm_mine_count = int(self.farm_mine_count)
+            except Exception:
+                farm_mine_count = 0
+            pp_handlers.farm_mine(farm_mine_count)
         self.master.destroy()
 
     def countdown(self):
         global COUNT
         if self.winfo_exists():
             self.join_to_arena_count = self.join_to_arena_entry.get()
+            self.farm_mine_count = self.farm_mine_entry.get()
             self.destroy()
 
         if COUNT > 0:

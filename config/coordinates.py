@@ -6,8 +6,8 @@ class Point:
     X: int
     Y: int
 
-    def to_tuple(self):
-        return (self.x, self.y)
+    def to_tuple(self) -> tuple[int, int]:
+        return (self.X, self.Y)
 
 
 @dataclass
@@ -115,7 +115,7 @@ def load_coords(main_coords) -> dict[MainButtons, Sectors]:
                 int(x1 + (x2 - x1) * 0.91),
                 int(y1 + (y2 - y1) * 0.15),
             ),
-            gift_claim_free=Point(  # Gift Pack Free #TODO
+            gift_claim_free=Point(
                 int(x1 + (x2 - x1) * 0.23),
                 int(y1 + (y2 - y1) * 0.38),
             ),
